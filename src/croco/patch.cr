@@ -52,4 +52,8 @@ class Patch
   def get(key)
     @data[key] || 0.0
   end
+
+  def apply(key)
+    @data[key] = yield @data[key]
+  end
 end

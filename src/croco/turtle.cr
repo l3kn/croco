@@ -21,7 +21,7 @@ class Turtle
     @data = {} of Symbol => Int32
   end
 
-  def forward(n)
+  def forward(n = 1)
     n = @data[n] if n.is_a? Symbol
 
     new_x = @x + n * Math.sin(@direction / RADIANTS)
@@ -33,7 +33,7 @@ class Turtle
     @y = new_y
   end
 
-  def back(n)
+  def back(n = 1)
     n = @data[n] if n.is_a? Symbol
 
     forward(-n)

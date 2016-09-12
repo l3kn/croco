@@ -81,6 +81,7 @@ class World
     end
 
     n.times do
+      print "\rStep #{@steps}"
       @patches.each do |p|
         patch_step(p)
       end
