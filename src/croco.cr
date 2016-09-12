@@ -1,0 +1,6 @@
+require "stumpy_png"
+require "./croco/world"
+require "./croco/utils"
+require "./croco/patch"
+require "./croco/helper"
+require "./croco/turtle"
