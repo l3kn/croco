@@ -20,33 +20,33 @@ class SlimeMold < World
 
     # drop pheromone
     turtle.ask_patch_here do |p|
-      p.set(:pheromone, p.get(:pheromone) + 1)
+      # p.set(:pheromone, p.get(:pheromone) + 1)
+      p.apply(:pheromone) { |x| x + 1 }
     end
 
     sniff(turtle)
   end
 
   def sniff(turtle)
-    turtle.left(45)
-    turtle.forward(1)
-    v1 = turtle.patch_here.get(:pheromone)
-    turtle.back(1)
+    noses = [-45, 0, 45]
 
-    turtle.right(45)
-    turtle.forward(1)
-    v2 = turtle.patch_here.get(:pheromone)
-    turtle.back(1)
+    # # Turtles with more noses
+    # # tend to form more, smaller clusters,
+    # # as they are less likely to wander of
+    # # and join an other cluster
+    # noses = [-90, -45, 0, 45, 90]
 
-    turtle.right(45)
-    turtle.forward(1)
-    v3 = turtle.patch_here.get(:pheromone)
-    turtle.back(1)
-
-    if v1 > v2 && v1 > v3
-      turtle.left(90)
-    elsif v2 > v1 && v2 > v3
-      turtle.left(45)
+    values = noses.map do |nose|
+      turtle.left(nose)
+      turtle.forward
+      value = turtle.patch_here.get(:pheromone)
+      turtle.back
+      turtle.right(nose)
+      {value, nose}
     end
+
+    best_nose = values.max_by(&.first)[1]
+    turtle.left(best_nose)
   end
 
   def patch_init(patch)
@@ -70,23 +70,7 @@ end
 world = SlimeMold.new(50, 50)
 world.setup(100)
 
-world.run_to(1)
-world.render("slime_mold1")
-world.run_to(20)
-world.render("slime_mold2")
-world.run_to(40)
-world.render("slime_mold3")
-world.run_to(60)
-world.render("slime_mold4")
-world.run_to(80)
-world.render("slime_mold5")
-world.run_to(100)
-world.render("slime_mold6")
-world.run_to(200)
-world.render("slime_mold7")
-world.run_to(500)
-world.render("slime_mold8")
-world.run_to(1000)
-world.render("slime_mold9")
-world.run_to(2000)
-world.render("slime_mold10")
+6.times do |i|
+  world.run_to(10 ** i)
+  world.render("slime_mold#{i}")
+end
