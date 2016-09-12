@@ -7,7 +7,7 @@ class Turtle
   property x : Float64
   property y : Float64
 
-  getter direction : Int32
+  property direction : Int32
   property color : StumpyPNG::RGBA
 
   property world : World
@@ -39,12 +39,12 @@ class Turtle
     forward(-n)
   end
 
-  def left(n)
+  def left(n = 90)
     n = @data[n] if n.is_a? Symbol
     @direction = (@direction - n) % 360
   end
 
-  def right(n)
+  def right(n = 90)
     n = @data[n] if n.is_a? Symbol
     @direction = (@direction + n) % 360
   end
