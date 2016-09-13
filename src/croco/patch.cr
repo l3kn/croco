@@ -19,6 +19,8 @@ class Patch
   end
 
   def diffuse(key)
+    return if @data[key] >= 0.001
+
     value = @data[key] / 9
     @world.get_patch(@x + 1,     @y).diffusion_add(key, value)
     @world.get_patch(@x - 1,     @y).diffusion_add(key, value)
@@ -29,8 +31,6 @@ class Patch
     @world.get_patch(@x - 1, @y + 1).diffusion_add(key, value)
     @world.get_patch(@x - 1, @y - 1).diffusion_add(key, value)
     @world.get_patch(@x, @y).diffusion_add(key, -value * 8)
-
-    # @data[key] = value * 8
   end
 
   def diffusion_add(key, value)
