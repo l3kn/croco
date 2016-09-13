@@ -13,24 +13,24 @@ class LangtonsAnt < World
 
   def turtle_step(turtle)
     turtle.ask_patch_here do |p|
-      if p.get(:value) == 0.0 # 0 = white, 1 = black
+      if p[:value] == 0.0 # 0.0 = white, 1.0 = black
         turtle.left
-        p.set(:value, 1.0)
+        p[:value] = 1.0
       else
         turtle.right
-        p.set(:value, 0.0)
+        p[:value] = 0.0
       end
-      turtle.forward(1)
+      turtle.forward
     end
   end
 
   def patch_init(patch)
-    patch.set(:value, 0.0)
+    patch[:value] = 0.0
   end
 
   def patch_step(patch)
     # display
-    v = 1.0 - patch.get(:value)
+    v = 1.0 - patch[:value]
     patch.color = StumpyPNG::RGBA.from_gray_n(v.to_i, 1)
   end
 end

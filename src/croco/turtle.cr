@@ -12,13 +12,13 @@ class Turtle
 
   property world : World
 
-  getter data : Hash(Symbol, Int32)
+  getter data : Hash(Symbol, Float64)
 
 
   def initialize(@x, @y, @direction, @world)
     @pen_down = false
     @color = black
-    @data = {} of Symbol => Int32
+    @data = {} of Symbol => Float64
   end
 
   def forward(n = 1)
@@ -49,6 +49,11 @@ class Turtle
     @direction = (@direction + n) % 360
   end
 
+  def wiggle(n)
+    left(random n)
+    right(random n)
+  end
+
   def pen_down?
     @pen_down
   end
@@ -61,12 +66,16 @@ class Turtle
     @pen_down = false
   end
 
-  def set(key, value)
+  def []=(key, value)
     @data[key] = value
   end
 
-  def get(key)
+  def [](key)
     @data[key] || 0.0
+  end
+
+  def apply(key)
+    @data[key] = yield @data[key]
   end
 
   def ask_patch_here(&block)
@@ -76,4 +85,5 @@ class Turtle
   def patch_here
     @world.get_patch(@x.to_i, @y.to_i)
   end
+
 end

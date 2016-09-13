@@ -18,10 +18,10 @@ class Patch
     @diffusions = [] of {Symbol, Float64}
   end
 
-  def diffuse(key)
+  def diffuse(key, rate = 0.80)
     return if @data[key] <= 0.001
 
-    value = @data[key] / 9
+    value = @data[key] * rate / 8
     @world.get_patch(@x + 1,     @y).diffusion_add(key, value)
     @world.get_patch(@x - 1,     @y).diffusion_add(key, value)
     @world.get_patch(@x,     @y + 1).diffusion_add(key, value)
@@ -45,15 +45,21 @@ class Patch
     @diffusions = [] of {Symbol, Float64}
   end
 
-  def set(key, value)
+  def []=(key, value)
     @data[key] = value
   end
 
-  def get(key)
+  def [](key)
     @data[key] || 0.0
   end
 
   def apply(key)
     @data[key] = yield @data[key]
+  end
+
+  def distance(x, y)
+    delta_x = @x - x
+    delta_y = @y - y
+    Math.sqrt(delta_x * delta_x + delta_y * delta_y)
   end
 end

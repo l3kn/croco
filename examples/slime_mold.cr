@@ -12,15 +12,11 @@ class SlimeMold < World
 
   def turtle_step(turtle)
     # walk
-    turtle.forward(1)
-
-    # wiggle
-    turtle.left(random 40)
-    turtle.right(random 40)
+    turtle.forward
+    turtle.wiggle(40)
 
     # drop pheromone
     turtle.ask_patch_here do |p|
-      # p.set(:pheromone, p.get(:pheromone) + 1)
       p.apply(:pheromone) { |x| x + 1 }
     end
 
@@ -39,7 +35,7 @@ class SlimeMold < World
     values = noses.map do |nose|
       turtle.left(nose)
       turtle.forward
-      value = turtle.patch_here.get(:pheromone)
+      value = turtle.patch_here[:pheromone]
       turtle.back
       turtle.right(nose)
       {value, nose}
@@ -50,12 +46,12 @@ class SlimeMold < World
   end
 
   def patch_init(patch)
-    patch.set(:pheromone, 0.0)
+    patch[:pheromone] = 0.0
   end
 
   def patch_step(patch)
     # display
-    n = [patch.get(:pheromone), 3.0].min
+    n = [patch[:pheromone], 3.0].min
     g = (255.0 / 3.0 * n).to_i
     patch.color = StumpyPNG::RGBA.from_rgb_n({0, g, 0}, 8)
 
@@ -63,14 +59,14 @@ class SlimeMold < World
     patch.diffuse(:pheromone)
 
     # evaporation
-    patch.set(:pheromone, patch.get(:pheromone) * 0.90)
+    patch.apply(:pheromone) { |x| x * 0.9 }
   end
 end
 
 world = SlimeMold.new(50, 50)
 world.setup(100)
 
-6.times do |i|
+5.times do |i|
   world.run_to(10 ** i)
   world.render("slime_mold#{i}")
 end

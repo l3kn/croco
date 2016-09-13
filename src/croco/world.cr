@@ -99,29 +99,28 @@ class World
     Helper.line(x0, y0, x1, y1, @canvas, color)
   end
 
-  def render(filename)
-    step = 10
-    output_canvas = StumpyPNG::Canvas.new(@size_x * step, @size_y * step, white)
+  def render(filename, size = 10)
+    output_canvas = StumpyPNG::Canvas.new(@size_x * size, @size_y * size, white)
 
     (0...@size_x).each do |x|
       (0...@size_y).each do |y|
         patch = get_patch(x, y)
-        step.times do |off_x|
-          step.times do |off_y|
-            output_canvas[x*step + off_x, y*step + off_y] = patch.color
+        size.times do |off_x|
+          size.times do |off_y|
+            output_canvas[(x * size) + off_x, (y * size) + off_y] = patch.color
           end
         end
       end
     end
 
     @turtles.each do |t|
-      Helper.circle(t.x * step, t.y * step, 5, output_canvas, t.color)
+      Helper.circle(t.x * size, t.y * size, 5, output_canvas, t.color)
 
-      x0 = t.x * step
-      y0 = t.y * step
+      x0 = t.x * size
+      y0 = t.y * size
       n = 10
-      x1 = (t.x * step) + n * Math.sin(t.direction / RADIANTS)
-      y1 = (t.y * step) + n * Math.cos(t.direction / RADIANTS)
+      x1 = (t.x * size) + n * Math.sin(t.direction / RADIANTS)
+      y1 = (t.y * size) + n * Math.cos(t.direction / RADIANTS)
 
       Helper.line(x0, y0, x1, y1, output_canvas, t.color)
     end
