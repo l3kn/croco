@@ -61,6 +61,27 @@ module Helper
     end
   end
 
+  def self.filled_circle(x0, y0, radius, canvas, color)
+    x = radius
+    y = 0
+    err = 0
+
+    while x >= y
+      line(x0 - x, y0 + y, x0 + x, y0 + y, canvas, color)
+      line(x0 - y, y0 + x, x0 + y, y0 + x, canvas, color)
+      line(x0 - x, y0 - y, x0 + x, y0 - y, canvas, color)
+      line(x0 - y, y0 - x, x0 + y, y0 - x, canvas, color)
+
+      y += 1
+      err += 1 + 2*y
+
+      if 2*(err - x) + 1 > 0
+        x -= 1
+        err += 1 - 2*x
+      end
+    end
+  end
+
   def self.set_pixel(x, y, canvas, color)
     canvas[x.to_i % canvas.width, y.to_i % canvas.height] = color
   end
