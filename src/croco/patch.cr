@@ -33,4 +33,12 @@ class Patch
     delta_y = @y - y
     Math.sqrt(delta_x * delta_x + delta_y * delta_y)
   end
+
+  def neighbours
+    @world.neighbours(@x, @y)
+  end
+
+  def turtles
+    @world.get_turtles_for_patch(@x, @y)
+  end
 end

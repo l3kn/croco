@@ -14,6 +14,8 @@ class World
 
   getter size_x : Int32
   getter size_y : Int32
+
+  property silent : Bool
   
   def initialize(@size_x, @size_y)
     @canvas = StumpyPNG::Canvas.new(size_x, size_y, white)
@@ -21,6 +23,8 @@ class World
     @turtles = [] of Turtle
     @patches = [] of Patch
     @steps = 0
+
+    @silent = false
 
     init_patches
   end
@@ -78,6 +82,19 @@ class World
   def after_step
   end
 
+  def neighbours(x, y)
+    [
+      get_patch(x + 1,     y),
+      get_patch(x - 1,     y),
+      get_patch(    x, y + 1),
+      get_patch(    x, y - 1),
+      get_patch(x + 1, y + 1),
+      get_patch(x + 1, y - 1),
+      get_patch(x - 1, y + 1),
+      get_patch(x - 1, y - 1),
+    ]
+  end
+
   # Diffusion needs to happen on this level
   # because patch_step
   # is applied to one patch after another,
@@ -88,21 +105,21 @@ class World
 
     # First, calculate new values for all patches
     @patches.each_with_index do |patch, i|
-      neighbours = 0.0
       x = patch.x
       y = patch.y
-
-      neighbours += get_patch(x + 1,     y)[key]
-      neighbours += get_patch(x - 1,     y)[key]
-      neighbours += get_patch(    x, y + 1)[key]
-      neighbours += get_patch(    x, y - 1)[key]
-      neighbours += get_patch(x + 1, y + 1)[key]
-      neighbours += get_patch(x + 1, y - 1)[key]
-      neighbours += get_patch(x - 1, y + 1)[key]
-      neighbours += get_patch(x - 1, y - 1)[key]
+      neighbours_value = 0.0
+      neighbours_value += get_patch(x + 1,     y)[key]
+      neighbours_value += get_patch(x - 1,     y)[key]
+      neighbours_value += get_patch(    x, y + 1)[key]
+      neighbours_value += get_patch(    x, y - 1)[key]
+      neighbours_value += get_patch(x + 1, y + 1)[key]
+      neighbours_value += get_patch(x + 1, y - 1)[key]
+      neighbours_value += get_patch(x - 1, y + 1)[key]
+      neighbours_value += get_patch(x - 1, y - 1)[key]
+      neighbours_value = neighbours(patch.x, patch.y).map { |p| p[key] }.sum
 
       own = patch[key]
-      new_value = (neighbours * rate / 8) + own * (1.0 - rate)
+      new_value = (neighbours_value * rate / 8) + own * (1.0 - rate)
 
       new_values[i] = new_value
     end
@@ -111,6 +128,10 @@ class World
     @patches.each_with_index do |patch, i|
       patch[key] = new_values[i]
     end
+  end
+
+  def get_turtles_for_patch(x, y)
+    @turtles.select { |t| t.x > x && t.x < (x+1) && t.y > y && t.y < (y+1) }
   end
 
   def run_to(n)
@@ -130,7 +151,7 @@ class World
     end
 
     n.times do
-      print "\rStep #{@steps}"
+      print "\rStep #{@steps}" unless @silent
       before_step
       @patches.each do |p|
         patch_step(p)
@@ -147,14 +168,14 @@ class World
     Helper.line(x0, y0, x1, y1, @canvas, color)
   end
 
-  def render(filename, size = 10)
+  def render(filename, size = 10, filled = false)
     output_canvas = StumpyPNG::Canvas.new(@size_x * size, @size_y * size, white)
 
-    (0...@size_x).each do |x|
-      (0...@size_y).each do |y|
+    (0...@size_y).each do |y|
+      (0...@size_x).each do |x|
         patch = get_patch(x, y)
-        size.times do |off_x|
-          size.times do |off_y|
+        size.times do |off_y|
+          size.times do |off_x|
             output_canvas[(x * size) + off_x, (y * size) + off_y] = patch.color
           end
         end
@@ -162,7 +183,11 @@ class World
     end
 
     @turtles.each do |t|
-      Helper.circle(t.x * size, t.y * size, 5, output_canvas, t.color)
+      if filled
+        Helper.filled_circle(t.x * size, t.y * size, 5, output_canvas, t.color)
+      else
+        Helper.circle(t.x * size, t.y * size, 5, output_canvas, t.color)
+      end
 
       x0 = t.x * size
       y0 = t.y * size
