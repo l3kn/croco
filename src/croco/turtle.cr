@@ -29,8 +29,8 @@ class Turtle
 
     @world.line(@x, @y, new_x, new_y, @color) if pen_down?
 
-    @x = new_x
-    @y = new_y
+    @x = new_x % @world.size_x
+    @y = new_y % @world.size_y
   end
 
   def back(n = 1)
@@ -47,6 +47,13 @@ class Turtle
   def right(n = 90)
     n = @data[n] if n.is_a? Symbol
     @direction = (@direction + n) % 360
+  end
+
+  def face(x, y)
+    delta_x = x - @x
+    delta_y = y - @y
+
+    @direction = (Math.atan2(delta_x, delta_y) * RADIANTS).to_i % 360
   end
 
   def wiggle(n)
