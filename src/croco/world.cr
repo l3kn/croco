@@ -66,7 +66,16 @@ class World
   def patch_init(patch)
   end
 
-  def observer_step
+  def before_init
+  end
+
+  def after_init
+  end
+
+  def before_step
+  end
+
+  def after_step
   end
 
   # Diffusion needs to happen on this level
@@ -110,17 +119,19 @@ class World
 
   def run(n)
     if @steps == 0
+      before_init
       @patches.each do |p|
         patch_init(p)
       end
       @turtles.each do |t|
         turtle_init(t)
       end
+      after_init
     end
 
     n.times do
       print "\rStep #{@steps}"
-      observer_step
+      before_step
       @patches.each do |p|
         patch_step(p)
       end
@@ -128,6 +139,7 @@ class World
         turtle_step(t)
       end
       @steps += 1
+      after_step
     end
   end
 

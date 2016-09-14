@@ -59,7 +59,7 @@ class SlimeMold < World
     patch.apply(:pheromone) { |x| x * 0.9 }
   end
 
-  def observer_step
+  def after_step
     diffuse(:pheromone)
   end
 end
