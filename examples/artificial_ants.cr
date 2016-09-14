@@ -59,7 +59,7 @@ class ArtificialAnts < World
     else
       # Follow the nest scent and drop pheromone along the way
       turtle.patch_here.apply(:pheromone) { |x| x + 60 }
-      turtle.face(50, 50)
+      sniff(turtle, :nest_scent)
     end
   end
 
