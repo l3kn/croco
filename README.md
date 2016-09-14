@@ -30,3 +30,26 @@ They start forming small groups
 And after a while only a few large groups remain
 
 ![](images/slime_mold/slime_mold10.png)
+
+### Termites
+
+Initially each patch has a 12.5% chance of containing a wood chunk.
+
+Each agent (termite)
+follows only two rules:
+
+If there is a wood chunk on the current patch:
+1. If not carrying a wood chunk, pick it up
+2. If carrying a wood chunk already, drop it (forming a pile)
+
+![](images/termites/termites1.png)
+
+After a while the number of piles
+(patches with at least one chunk on it)
+starts to shrink,
+while their average size increases.
+
+![](images/termites/termites3.png)
+![](images/termites/termites5.png)
+
+![](images/termites/termites_graph.png)
