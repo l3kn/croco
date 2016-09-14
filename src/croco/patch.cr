@@ -7,15 +7,13 @@ class Patch
   property color : StumpyPNG::RGBA
   property world : World
   getter data : Hash(Symbol, Float64)
-  getter diffusions : Array({Symbol, Float64})
 
-  property x : Int32
-  property y : Int32
+  property x : Float64 
+  property y : Float64
 
   def initialize(@x, @y, @world)
     @color = white
     @data = {} of Symbol => Float64
-    @diffusions = [] of {Symbol, Float64}
   end
 
   def []=(key, value)

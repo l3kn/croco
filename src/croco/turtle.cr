@@ -1,24 +1,21 @@
 require "./utils"
 require "./world"
+require "./patch"
 require "stumpy_png"
 include Utils
 
-class Turtle
-  property x : Float64
-  property y : Float64
-
+# This might sound strange,
+# but the only difference
+# between a turtle and a patch is,
+# that the turtle can move around
+# while the patch remains at its place
+class Turtle < Patch
+  property pen_down : Bool
   property direction : Int32
-  property color : StumpyPNG::RGBA
-
-  property world : World
-
-  getter data : Hash(Symbol, Float64)
-
 
   def initialize(@x, @y, @direction, @world)
+    super(@x, @y, @world)
     @pen_down = false
-    @color = black
-    @data = {} of Symbol => Float64
   end
 
   def forward(n = 1)
@@ -73,24 +70,11 @@ class Turtle
     @pen_down = false
   end
 
-  def []=(key, value)
-    @data[key] = value
-  end
-
-  def [](key)
-    @data[key] || 0.0
-  end
-
-  def apply(key)
-    @data[key] = yield @data[key]
-  end
-
   def ask_patch_here(&block)
     yield patch_here
   end
 
   def patch_here
-    @world.get_patch(@x.to_i, @y.to_i)
+    @world.get_patch(@x, @y)
   end
-
 end

@@ -28,14 +28,14 @@ class World
   def init_patches
     (0...@size_y).each do |y|
       (0...@size_x).each do |x|
-        @patches << Patch.new(x, y, self)
+        @patches << Patch.new(x.to_f, y.to_f, self)
       end
     end
   end
 
   def get_patch(x, y)
-    x %= @size_x
-    y %= @size_y
+    x = x.to_i % @size_x
+    y = y.to_i % @size_y
     @patches[x + @size_x * y]
   end
 
