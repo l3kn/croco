@@ -66,6 +66,44 @@ class World
   def patch_init(patch)
   end
 
+  def observer_step
+  end
+
+  # Diffusion needs to happen on this level
+  # because patch_step
+  # is applied to one patch after another,
+  # not once for all patches,
+  # and this would distort the results
+  def diffuse(key, rate = 0.80)
+    new_values = Array.new(@patches.size, 0.0)
+
+    # First, calculate new values for all patches
+    @patches.each_with_index do |patch, i|
+      neighbours = 0.0
+      x = patch.x
+      y = patch.y
+
+      neighbours += get_patch(x + 1,     y)[key]
+      neighbours += get_patch(x - 1,     y)[key]
+      neighbours += get_patch(    x, y + 1)[key]
+      neighbours += get_patch(    x, y - 1)[key]
+      neighbours += get_patch(x + 1, y + 1)[key]
+      neighbours += get_patch(x + 1, y - 1)[key]
+      neighbours += get_patch(x - 1, y + 1)[key]
+      neighbours += get_patch(x - 1, y - 1)[key]
+
+      own = patch[key]
+      new_value = (neighbours * rate / 8) + own * (1.0 - rate)
+
+      new_values[i] = new_value
+    end
+
+    # Then, change all patches at once
+    @patches.each_with_index do |patch, i|
+      patch[key] = new_values[i]
+    end
+  end
+
   def run_to(n)
     run(n - @steps) if n > @steps
   end
@@ -82,11 +120,9 @@ class World
 
     n.times do
       print "\rStep #{@steps}"
+      observer_step
       @patches.each do |p|
         patch_step(p)
-      end
-      @patches.each do |p|
-        p.diffusions_apply
       end
       @turtles.each do |t|
         turtle_step(t)

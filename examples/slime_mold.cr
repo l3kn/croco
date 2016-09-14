@@ -55,11 +55,12 @@ class SlimeMold < World
     g = (255.0 / 3.0 * n).to_i
     patch.color = StumpyPNG::RGBA.from_rgb_n({0, g, 0}, 8)
 
-    # diffusion
-    patch.diffuse(:pheromone)
-
     # evaporation
     patch.apply(:pheromone) { |x| x * 0.9 }
+  end
+
+  def observer_step
+    diffuse(:pheromone)
   end
 end
 

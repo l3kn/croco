@@ -18,33 +18,6 @@ class Patch
     @diffusions = [] of {Symbol, Float64}
   end
 
-  def diffuse(key, rate = 0.80)
-    return if @data[key] <= 0.001
-
-    value = @data[key] * rate / 8
-    @world.get_patch(@x + 1,     @y).diffusion_add(key, value)
-    @world.get_patch(@x - 1,     @y).diffusion_add(key, value)
-    @world.get_patch(@x,     @y + 1).diffusion_add(key, value)
-    @world.get_patch(@x,     @y - 1).diffusion_add(key, value)
-    @world.get_patch(@x + 1, @y + 1).diffusion_add(key, value)
-    @world.get_patch(@x + 1, @y - 1).diffusion_add(key, value)
-    @world.get_patch(@x - 1, @y + 1).diffusion_add(key, value)
-    @world.get_patch(@x - 1, @y - 1).diffusion_add(key, value)
-    @world.get_patch(@x, @y).diffusion_add(key, -value * 8)
-  end
-
-  def diffusion_add(key, value)
-    @diffusions << {key, value}
-  end
-
-  def diffusions_apply
-    @diffusions.each do |key, value|
-      @data[key] += value
-    end
-
-    @diffusions = [] of {Symbol, Float64}
-  end
-
   def []=(key, value)
     @data[key] = value
   end
