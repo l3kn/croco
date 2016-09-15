@@ -6,7 +6,7 @@ include Utils
 class Patch
   property color : StumpyPNG::RGBA
   property world : World
-  getter data : Hash(Symbol, Float64)
+  property data : Hash(Symbol, Float64)
 
   property x : Float64 
   property y : Float64

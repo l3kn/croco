@@ -9,6 +9,7 @@ include Utils
 class World
   getter canvas : StumpyPNG::Canvas
   getter turtles : Array(Turtle)
+  getter new_turtles : Array(Turtle)
   getter patches : Array(Patch)
   getter steps : Int32
 
@@ -23,6 +24,8 @@ class World
     @canvas = StumpyPNG::Canvas.new(size_x * @size, size_y * @size, white)
 
     @turtles = [] of Turtle
+    @new_turtles = [] of Turtle
+    @deletion_turtles = [] of Turtle
     @patches = [] of Patch
     @steps = 0
 
@@ -135,11 +138,16 @@ class World
   end
 
   def remove_turtle(turtle)
-    @turtles.select! { |t| t != turtle }
+    @deletion_turtles << turtle
   end
 
-  def duplicate_turtle(turtle)
-    @turtles << turtle.dup
+  def duplicate_turtle(t)
+    # new = Turtle.new(t.x, t.y, t.direction, t.world)
+    # new.data = t.data.dup
+    # new.pen_down = t.pen_down
+    # new.color = t.color
+
+    @new_turtles << t.clone
   end
 
   def run_to(n)
@@ -168,6 +176,15 @@ class World
         turtle_step(t)
       end
       @steps += 1
+
+      # Only add cloned turtles
+      # after the steps for all “old” turtles
+      # have been run
+      @turtles -= @deletion_turtles
+      @turtles += @new_turtles
+      @new_turtles = [] of Turtle
+      @deletion_turtles = [] of Turtle
+
       after_step
     end
   end

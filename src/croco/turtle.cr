@@ -85,4 +85,11 @@ class Turtle < Patch
   def patch_here
     @world.get_patch(@x, @y)
   end
+
+  def clone
+    new = self.dup
+    new.data = @data.clone
+
+    new
+  end
 end
