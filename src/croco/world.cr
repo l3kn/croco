@@ -97,6 +97,15 @@ class World
     ]
   end
 
+  def neighbours4(x, y)
+    [
+      get_patch(x + 1,     y),
+      get_patch(x - 1,     y),
+      get_patch(    x, y + 1),
+      get_patch(    x, y - 1),
+    ]
+  end
+
   # Diffusion needs to happen on this level
   # because patch_step
   # is applied to one patch after another,
@@ -107,17 +116,6 @@ class World
 
     # First, calculate new values for all patches
     @patches.each_with_index do |patch, i|
-      x = patch.x
-      y = patch.y
-      neighbours_value = 0.0
-      neighbours_value += get_patch(x + 1,     y)[key]
-      neighbours_value += get_patch(x - 1,     y)[key]
-      neighbours_value += get_patch(    x, y + 1)[key]
-      neighbours_value += get_patch(    x, y - 1)[key]
-      neighbours_value += get_patch(x + 1, y + 1)[key]
-      neighbours_value += get_patch(x + 1, y - 1)[key]
-      neighbours_value += get_patch(x - 1, y + 1)[key]
-      neighbours_value += get_patch(x - 1, y - 1)[key]
       neighbours_value = neighbours(patch.x, patch.y).map { |p| p[key] }.sum
 
       own = patch[key]
@@ -145,7 +143,7 @@ class World
   end
 
   def run_to(n)
-    run(n - @steps) if n > @steps
+    run(n - @steps) if n >= @steps
   end
 
   def run(n)

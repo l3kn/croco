@@ -38,6 +38,10 @@ class Patch
     @world.neighbours(@x, @y)
   end
 
+  def neighbours4
+    @world.neighbours4(@x, @y)
+  end
+
   def turtles
     @world.get_turtles_for_patch(@x, @y)
   end
