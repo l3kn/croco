@@ -15,10 +15,12 @@ class World
   getter size_x : Int32
   getter size_y : Int32
 
+  getter size : Int32
+
   property silent : Bool
   
-  def initialize(@size_x, @size_y)
-    @canvas = StumpyPNG::Canvas.new(size_x, size_y, white)
+  def initialize(@size_x, @size_y, @size = 10)
+    @canvas = StumpyPNG::Canvas.new(size_x * @size, size_y * @size, white)
 
     @turtles = [] of Turtle
     @patches = [] of Patch
@@ -45,7 +47,7 @@ class World
 
   def create_turtles(n)
     @turtles = Array.new(n) do
-      direction = rand(0...360)
+      direction = rand(0.0...360.0)
       # (0, 0) is the center of the world
       x = rand(0...@size_x)
       y = rand(0...@size_y)
@@ -134,6 +136,14 @@ class World
     @turtles.select { |t| t.x > x && t.x < (x+1) && t.y > y && t.y < (y+1) }
   end
 
+  def remove_turtle(turtle)
+    @turtles.select! { |t| t != turtle }
+  end
+
+  def duplicate_turtle(turtle)
+    @turtles << turtle.dup
+  end
+
   def run_to(n)
     run(n - @steps) if n > @steps
   end
@@ -165,18 +175,18 @@ class World
   end
 
   def line(x0, y0, x1, y1, color)
-    Helper.line(x0, y0, x1, y1, @canvas, color)
+    Helper.line(x0 * @size, y0 * @size, x1 * @size, y1 * @size, @canvas, color)
   end
 
-  def render(filename, size = 10, filled = false)
-    output_canvas = StumpyPNG::Canvas.new(@size_x * size, @size_y * size, white)
+  def render(filename, filled = false)
+    output_canvas = StumpyPNG::Canvas.new(@size_x * @size, @size_y * @size, white)
 
     (0...@size_y).each do |y|
       (0...@size_x).each do |x|
         patch = get_patch(x, y)
         size.times do |off_y|
           size.times do |off_x|
-            output_canvas[(x * size) + off_x, (y * size) + off_y] = patch.color
+            output_canvas[(x * @size) + off_x, (y * @size) + off_y] = patch.color
           end
         end
       end
@@ -184,18 +194,25 @@ class World
 
     @turtles.each do |t|
       if filled
-        Helper.filled_circle(t.x * size, t.y * size, 5, output_canvas, t.color)
+        Helper.filled_circle(t.x * @size, t.y * @size, 5, output_canvas, t.color)
       else
-        Helper.circle(t.x * size, t.y * size, 5, output_canvas, t.color)
+        Helper.circle(t.x * @size, t.y * @size, 5, output_canvas, t.color)
       end
 
-      x0 = t.x * size
-      y0 = t.y * size
+      x0 = t.x * @size
+      y0 = t.y * @size
       n = 10
-      x1 = (t.x * size) + n * Math.sin(t.direction / RADIANTS)
-      y1 = (t.y * size) + n * Math.cos(t.direction / RADIANTS)
+      x1 = (t.x * @size) + n * Math.sin(t.direction / RADIANTS)
+      y1 = (t.y * @size) + n * Math.cos(t.direction / RADIANTS)
 
       Helper.line(x0, y0, x1, y1, output_canvas, t.color)
+    end
+
+    (0...(@size_y * @size)).each do |y|
+      (0...(@size_x * @size)).each do |x|
+        other = @canvas[x, y]
+        output_canvas[x, y] = other if other != white
+      end
     end
     StumpyPNG.write(output_canvas, "#{filename}.png")
   end

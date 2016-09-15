@@ -11,11 +11,19 @@ include Utils
 # while the patch remains at its place
 class Turtle < Patch
   property pen_down : Bool
-  property direction : Int32
+  property direction : Float64
 
   def initialize(@x, @y, @direction, @world)
     super(@x, @y, @world)
     @pen_down = false
+  end
+
+  def die
+    @world.remove_turtle(self)
+  end
+
+  def duplicate
+    @world.duplicate_turtle(self)
   end
 
   def forward(n = 1)
@@ -50,7 +58,7 @@ class Turtle < Patch
     delta_x = x - @x
     delta_y = y - @y
 
-    @direction = (Math.atan2(delta_x, delta_y) * RADIANTS).to_i % 360
+    @direction = (Math.atan2(delta_x, delta_y) * RADIANTS) % 360
   end
 
   def wiggle(n)
