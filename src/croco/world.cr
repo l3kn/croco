@@ -128,7 +128,7 @@ class World
   end
 
   def get_turtles_for_patch(x, y)
-    @turtles.select { |t| t.x > x && t.x < (x+1) && t.y > y && t.y < (y+1) }
+    @turtles.select { |t| t.x >= x && t.x < (x+1) && t.y >= y && t.y < (y+1) }
   end
 
   def remove_turtle(turtle)
