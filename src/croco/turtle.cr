@@ -9,13 +9,20 @@ include Utils
 # between a turtle and a patch is,
 # that the turtle can move around
 # while the patch remains at its place
-class Turtle < Patch
+class AbstractTurtle < AbstractPatch
   property pen_down : Bool
   property direction : Float64
 
   def initialize(@x, @y, @direction, @world)
     super(@x, @y, @world)
     @pen_down = false
+    init
+  end
+
+  def init
+  end
+
+  def step
   end
 
   def die

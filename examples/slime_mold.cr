@@ -1,71 +1,63 @@
 require "../src/croco"
 
-class SlimeMold < World
-  def setup(n)
-    clear_all
-    create_turtles(n)
+class Turtle < AbstractTurtle
+  def init
+    @color = white
   end
 
-  def turtle_init(turtle)
-    turtle.color = white
+  def step
+    forward
+    wiggle(40)
+
+    patch_here.apply(:pheromone) { |x| x + 1 }
+    sniff
   end
 
-  def turtle_step(turtle)
-    # walk
-    turtle.forward
-    turtle.wiggle(40)
-
-    # drop pheromone
-    turtle.ask_patch_here do |p|
-      p.apply(:pheromone) { |x| x + 1 }
-    end
-
-    sniff(turtle)
-  end
-
-  def sniff(turtle)
-    noses = [-45, 0, 45]
-
+  def sniff
     # # Turtles with more noses
     # # tend to form more, smaller clusters,
     # # as they are less likely to wander of
     # # and join an other cluster
-    # noses = [-90, -45, 0, 45, 90]
+    # noses = [0, 45, -45, 90, -90]
+    noses = [0, 45, -45]
 
-    values = noses.map do |nose|
-      turtle.left(nose)
-      turtle.forward
-      value = turtle.patch_here[:pheromone]
-      turtle.back
-      turtle.right(nose)
-      {value, nose}
+    best_nose = noses.max_by do |nose|
+      left(nose)
+      forward
+      value = patch_here[:pheromone]
+      back
+      right(nose)
+      value
     end
 
-    best_nose = values.max_by(&.first)[1]
-    turtle.left(best_nose)
+    left(best_nose)
+  end
+end
+
+class Patch < AbstractPatch
+  def init
+    self[:pheromone] = 0.0
   end
 
-  def patch_init(patch)
-    patch[:pheromone] = 0.0
-  end
-
-  def patch_step(patch)
+  def step
     # display
-    n = [patch[:pheromone], 3.0].min
+    n = [self[:pheromone], 3.0].min
     g = (255.0 / 3.0 * n).to_i
-    patch.color = StumpyPNG::RGBA.from_rgb_n({0, g, 0}, 8)
+    @color = StumpyPNG::RGBA.from_rgb_n({0, g, 0}, 8)
 
     # evaporation
-    patch.apply(:pheromone) { |x| x * 0.9 }
+    apply(:pheromone) { |x| x * 0.9 }
   end
+end
 
+class SlimeMold < World
   def after_step
     diffuse(:pheromone)
   end
 end
 
 world = SlimeMold.new(50, 50)
-world.setup(100)
+world.create_turtles(100)
 
 5.times do |i|
   world.run_to(10 ** i)

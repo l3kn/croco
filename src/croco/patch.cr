@@ -3,7 +3,7 @@ require "./world"
 require "stumpy_png"
 include Utils
 
-class Patch
+class AbstractPatch
   property color : StumpyPNG::RGBA
   property world : World
   property data : Hash(Symbol, Float64)
@@ -14,6 +14,13 @@ class Patch
   def initialize(@x, @y, @world)
     @color = white
     @data = {} of Symbol => Float64
+    init
+  end
+  
+  def init
+  end
+
+  def step
   end
 
   def []=(key, value)

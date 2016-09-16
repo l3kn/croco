@@ -1,39 +1,43 @@
 require "../src/croco"
 
-class RecursiveTrees < World
-  def setup
-    clear_all
-    create_turtles(1)
+class Turtle < AbstractTurtle
+  def init
+    @x = 25.0
+    @y = 50.0
+    face(25.0, 1.0)
+    pen_down
+    @color = black
+
+    self[:length] = 25.0
+    self[:alive] = 1.0
   end
 
-  def turtle_init(turtle)
-    turtle.x = 25.0
-    turtle.y = 50.0
-    turtle.face(25.0, 1.0)
-    turtle.pen_down
-    turtle.color = black
+  def step
+    if self[:alive] == 1.0
+      forward(:length)
+      old_length = self[:length]
 
-    turtle[:length] = 25.0
-    turtle[:alive] = 1.0
-  end
+      self[:length] = old_length * rand(0.4..0.7)
+      left(45)
+      duplicate
 
-  def turtle_step(turtle)
-    if turtle[:alive] == 1.0
-      turtle.forward(:length)
-      turtle.apply(:length) { |l| l / 2 }
+      self[:length] = old_length * rand(0.4..0.7)
+      right(90)
+      duplicate
 
-      turtle.left(45)
-      turtle.duplicate
-      turtle.right(90)
-      turtle.duplicate
-
-      turtle.die
+      die
     end
   end
 end
 
+class Patch < AbstractPatch
+end
+
+class RecursiveTrees < World
+end
+
 world = RecursiveTrees.new(50, 50, 10)
-world.setup
+world.create_turtles(1)
 
 10.times do |i|
   world.run_to(i)

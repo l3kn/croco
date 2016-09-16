@@ -6,6 +6,12 @@ require "./utils"
 
 include Utils
 
+# class Turtle < AbstractTurtle
+# end
+
+# class Patch < AbstractPatch
+# end
+
 class World
   getter canvas : StumpyPNG::Canvas
   getter turtles : Array(Turtle)
@@ -61,18 +67,6 @@ class World
 
   def clear_all
     @turtles = [] of Turtle
-  end
-
-  def turtle_step(turtle)
-  end
-
-  def turtle_init(turtle)
-  end
-
-  def patch_step(patch)
-  end
-
-  def patch_init(patch)
   end
 
   def before_init
@@ -142,11 +136,6 @@ class World
   end
 
   def duplicate_turtle(t)
-    # new = Turtle.new(t.x, t.y, t.direction, t.world)
-    # new.data = t.data.dup
-    # new.pen_down = t.pen_down
-    # new.color = t.color
-
     @new_turtles << t.clone
   end
 
@@ -157,29 +146,20 @@ class World
   def run(n)
     if @steps == 0
       before_init
-      @patches.each do |p|
-        patch_init(p)
-      end
-      @turtles.each do |t|
-        turtle_init(t)
-      end
       after_init
     end
 
     n.times do
       print "\rStep #{@steps}" unless @silent
       before_step
-      @patches.each do |p|
-        patch_step(p)
-      end
-      @turtles.each do |t|
-        turtle_step(t)
-      end
+
+      @patches.each(&.step)
+      @turtles.each(&.step)
       @steps += 1
 
-      # Only add cloned turtles
-      # after the steps for all “old” turtles
-      # have been run
+      # Only add cloned turtles / remove deleted turtles
+      # after the steps for all “old” turtles have been run.
+      # Otherwise it would manipulate the turtle step loop
       @turtles -= @deletion_turtles
       @turtles += @new_turtles
       @new_turtles = [] of Turtle
