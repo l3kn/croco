@@ -53,3 +53,7 @@ while their average size increases.
 ![](images/termites/termites4.png)
 
 ![](images/termites/termites_graph.png)
+
+# Credits
+
+* [Turtles, Termites and Traffic Jams](https://mitpress.mit.edu/books/turtles-termites-and-traffic-jams)
