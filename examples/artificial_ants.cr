@@ -123,12 +123,12 @@ class Patch < AbstractPatch
     n = [self[:pheromone], max_pheromone].min
     g = (255.0 / max_pheromone * n).to_i
 
-    @color = StumpyPNG::RGBA.from_rgb_n({r, g, b}, 8)
+    @color = StumpyCore::RGBA.from_rgb_n({r, g, b}, 8)
   end
 end
 
 class ArtificialAnts < World
-  def initialize(width, height)
+  def initialize(width, height, size)
     super
     @diffusion_rate = 0.15
   end
@@ -145,10 +145,10 @@ class ArtificialAnts < World
   end
 end
 
-world = ArtificialAnts.new(100, 100)
+world = ArtificialAnts.new(100, 100, 5)
 world.create_turtles(100)
 
 100.times do |i|
   world.run_to(10 * (i + 1))
-  world.render("artificial_ants#{i.to_s.rjust(2, '0')}", 5)
+  world.render("artificial_ants#{i.to_s.rjust(2, '0')}")
 end

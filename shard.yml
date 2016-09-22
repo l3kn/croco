@@ -11,5 +11,8 @@ dependencies:
   stumpy_png:
     github: l3kn/stumpy_png
     version: "-> 2.0.0"
+  stumpy_gif:
+    github: l3kn/stumpy_gif
+    version: "-> 0.0.1"
 
 license: MIT

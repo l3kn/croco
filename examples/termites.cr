@@ -83,14 +83,14 @@ class Patch < AbstractPatch
     n = [self[:wood_chips], 5.0].min
     b = (255.0 / 5.0 * n).to_i
 
-    @color = StumpyPNG::RGBA.from_rgb_n({0, 0, b}, 8)
+    @color = StumpyCore::RGBA.from_rgb_n({0, 0, b}, 8)
   end
 end
 
 class Termites < World
   property log : Log
 
-  def initialize(width, height)
+  def initialize(width, height, size)
     super
     @log = Log.new(["step", "piles"])
   end
@@ -103,12 +103,8 @@ class Termites < World
   end
 end
 
-world = Termites.new(100, 100)
+world = Termites.new(100, 100, 5)
 world.create_turtles(100)
 
-5.times do |i|
-  world.run_to(10 ** i)
-  world.render("termites#{i}", 5)
-end
-
+world.render_animated("termites", (0..50).map(&.*(200)))
 world.log.write("termites.csv")

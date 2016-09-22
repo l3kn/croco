@@ -1,10 +1,10 @@
+require "stumpy_png"
 require "./utils"
 require "./world"
-require "stumpy_png"
 include Utils
 
 class AbstractPatch
-  property color : StumpyPNG::RGBA
+  property color : StumpyCore::RGBA
   property world : World
   property data : Hash(Symbol, Float64)
 

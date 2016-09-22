@@ -43,7 +43,7 @@ class Patch < AbstractPatch
     # display
     n = [self[:pheromone], 3.0].min
     g = (255.0 / 3.0 * n).to_i
-    @color = StumpyPNG::RGBA.from_rgb_n({0, g, 0}, 8)
+    @color = StumpyCore::RGBA.from_rgb_n({0, g, 0}, 8)
 
     # evaporation
     apply(:pheromone) { |x| x * 0.9 }
@@ -58,8 +58,5 @@ end
 
 world = SlimeMold.new(50, 50)
 world.create_turtles(100)
-
-5.times do |i|
-  world.run_to(10 ** i)
-  world.render("slime_mold#{i}")
-end
+world.run_to(1)
+world.render_animated("slime_mold", (0..50).map(&.*(20)))

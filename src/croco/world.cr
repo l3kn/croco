@@ -1,4 +1,5 @@
 require "stumpy_png"
+require "../../../stumpy_gif/src/stumpy_gif"
 require "./turtle"
 require "./patch"
 require "./helper"
@@ -13,7 +14,7 @@ include Utils
 # end
 
 class World
-  getter canvas : StumpyPNG::Canvas
+  getter canvas : StumpyCore::Canvas
   getter turtles : Array(Turtle)
   getter new_turtles : Array(Turtle)
   getter patches : Array(Patch)
@@ -27,7 +28,7 @@ class World
   property silent : Bool
   
   def initialize(@size_x, @size_y, @size = 10)
-    @canvas = StumpyPNG::Canvas.new(size_x * @size, size_y * @size, white)
+    @canvas = StumpyCore::Canvas.new(size_x * @size, size_y * @size, white)
 
     @turtles = [] of Turtle
     @new_turtles = [] of Turtle
@@ -173,8 +174,24 @@ class World
     Helper.line(x0 * @size, y0 * @size, x1 * @size, y1 * @size, @canvas, color)
   end
 
+  def render_animated(filename, steps, filled = false)
+    frames = [] of StumpyCore::Canvas
+    steps.each do |step|
+      run_to(step)
+      frames << render(filled)
+    end
+
+    StumpyGIF.write(frames, "#{filename}.gif", :median_split)
+  end
+
+  # TODO: modify render functions to accept a step argument
+  # instead of using `world.run_to(n)`
   def render(filename, filled = false)
-    output_canvas = StumpyPNG::Canvas.new(@size_x * @size, @size_y * @size, white)
+    StumpyPNG.write(output_canvas, "#{filename}.png")
+  end
+
+  def render(filled = false)
+    output_canvas = StumpyCore::Canvas.new(@size_x * @size, @size_y * @size, white)
 
     (0...@size_y).each do |y|
       (0...@size_x).each do |x|
@@ -209,6 +226,7 @@ class World
         output_canvas[x, y] = other if other != white
       end
     end
-    StumpyPNG.write(output_canvas, "#{filename}.png")
+
+    output_canvas
   end
 end
