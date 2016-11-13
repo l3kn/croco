@@ -1,41 +1,6 @@
+require "stumpy_utils"
+
 module Helper
-  def self.line(x0, y0, x1, y1, canvas, color)
-
-    steep = (y1 - y0).abs > (x1 - x0).abs
-
-    if steep
-      x0, y0 = {y0, x0}
-      x1, y1 = {y1, x1}
-    end
-
-    if x0 > x1
-      x0, x1 = {x1, x0}
-      y0, y1 = {y1, y0}
-    end
-
-    delta_x = x1 - x0
-    delta_y = (y1 - y0).abs
-
-    error = (delta_x / 2).to_i
-
-    ystep = y0 < y1 ? 1 : -1
-    y = y0
-
-    ((x0.to_i)...(x1.to_i)).each do |x|
-      if steep
-        set_pixel(y, x, canvas, color)
-      else
-        set_pixel(x, y, canvas, color)
-      end
-
-      error -= delta_y
-      if error < 0.0
-        y += ystep
-        error += delta_x
-      end
-    end
-  end
-
   def self.circle(x0, y0, radius, canvas, color)
     x = radius
     y = 0
@@ -67,11 +32,22 @@ module Helper
     err = 0
 
     while x >= y
-      line(x0 - x, y0 + y, x0 + x, y0 + y, canvas, color)
-      line(x0 - y, y0 + x, x0 + y, y0 + x, canvas, color)
-      line(x0 - x, y0 - y, x0 + x, y0 - y, canvas, color)
-      line(x0 - y, y0 - x, x0 + y, y0 - x, canvas, color)
-
+      StumpyUtils.line(canvas,
+                       (x0 - x).to_i, (y0 + y).to_i,
+                       (x0 + x).to_i, (y0 + y).to_i,
+                       color)
+      StumpyUtils.line(canvas,
+                       (x0 - y).to_i, (y0 + x).to_i,
+                       (x0 + y).to_i, (y0 + x).to_i,
+                       color)
+      StumpyUtils.line(canvas,
+                       (x0 - x).to_i, (y0 - y).to_i,
+                       (x0 + x).to_i, (y0 - y).to_i,
+                       color)
+      StumpyUtils.line(canvas,
+                       (x0 - y).to_i, (y0 - x).to_i,
+                       (x0 + y).to_i, (y0 - x).to_i,
+                       color)
       y += 1
       err += 1 + 2*y
 

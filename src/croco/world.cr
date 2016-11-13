@@ -1,4 +1,5 @@
 require "stumpy_png"
+require "stumpy_utils"
 require "../../../stumpy_gif/src/stumpy_gif"
 require "./turtle"
 require "./patch"
@@ -171,7 +172,10 @@ class World
   end
 
   def line(x0, y0, x1, y1, color)
-    Helper.line(x0 * @size, y0 * @size, x1 * @size, y1 * @size, @canvas, color)
+    StumpyUtils.line(@canvas,
+                     (x0 * @size).to_i, (y0 * @size).to_i,
+                     (x1 * @size).to_i, (y1 * @size).to_i,
+                     color)
   end
 
   def render_animated(filename, steps, filled = false)
@@ -181,7 +185,7 @@ class World
       frames << render(filled)
     end
 
-    StumpyGIF.write(frames, "#{filename}.gif", :median_split)
+    StumpyGIF.write(frames, "#{filename}.gif", 30, :median_split)
   end
 
   # TODO: modify render functions to accept a step argument
@@ -217,7 +221,7 @@ class World
       x1 = (t.x * @size) + n * Math.sin(t.direction / RADIANTS)
       y1 = (t.y * @size) + n * Math.cos(t.direction / RADIANTS)
 
-      Helper.line(x0, y0, x1, y1, output_canvas, t.color)
+      StumpyUtils.line(output_canvas, x0.to_i, y0.to_i, x1.to_i, y1.to_i, t.color)
     end
 
     (0...(@size_y * @size)).each do |y|

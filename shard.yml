@@ -8,6 +8,9 @@ description: |
   Agent simulation 
 
 dependencies:
+  stumpy_utils:
+    github: l3kn/stumpy_utils
+    version: "-> 0.0.1"
   stumpy_png:
     github: l3kn/stumpy_png
     version: "-> 2.0.0"
